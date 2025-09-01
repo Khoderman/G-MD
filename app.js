@@ -906,111 +906,6 @@
     }
 
     // ======= DEMO =======
-    function seedDemo() {
-      const nomes = [
-        'Ana Luís Silva',
-        'Bruno Matola Santos',
-        'Carla João Machel',
-        'Dário Langa Sitoe',
-        'Ema Machel Mondlane',
-        'Filipe Langa Chissano'
-      ];
-      
-      const disciplinas = ['Matemática', 'Física', 'Química'];
-      const metodos = ['M-Pesa', 'E-Mola', 'Transferência', 'Dinheiro'];
-      
-      const estudantes = nomes.map((nome, i) => ({
-        id: crypto.randomUUID(),
-        nome,
-        codigo: gerarCodigo(),
-        mensalidade: 2500 + (i % 3) * 500,
-        notas: [
-          {
-            disc: disciplinas[i % 3],
-            periodo: 'Teste 1',
-            nota: 12 + (i % 8)
-          },
-          {
-            disc: disciplinas[(i + 1) % 3],
-            periodo: 'Teste 2',
-            nota: 14 + (i % 5)
-          }
-        ],
-        pagamentos: [
-          {
-            dt: new Date(Date.now() - (i % 3) * 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            valor: 2000 + (i % 3) * 500,
-            metodo: metodos[i % 4],
-            ref: `TX${1000 + i}`
-          }
-        ],
-        comportamento: [
-          {
-            dt: new Date(Date.now() - (i % 5) * 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            nivel: i % 4 === 0 ? 'Excelente' : i % 3 === 0 ? 'Bom' : 'Regular',
-            obs: 'Participativo e interessado'
-          }
-        ],
-        agenda: [
-          {
-            dt: new Date(Date.now() + (i % 4) * 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            hora: `${14 + (i % 3)}:30`
-          }
-        ]
-      }));
-      
-      state.db.students = estudantes;
-      
-      // Adicionar algumas presenças de exemplo
-      state.db.attendances = [];
-      const hoje = todayISO();
-      
-      estudantes.forEach(aluno => {
-        // 50% de chance de ter presença hoje
-        if (Math.random() > 0.5) {
-          state.db.attendances.push({
-            id: crypto.randomUUID(),
-            studentId: aluno.id,
-            dt: hoje,
-            hora: nowTime(),
-            origem: 'kiosk',
-            timestamp: new Date().toISOString()
-          });
-        }
-        
-        // Adicionar algumas presenças passadas
-        for (let i = 1; i <= 5; i++) {
-          if (Math.random() > 0.7) {
-            const dataPassada = new Date(Date.now() - i * 2 * 24 * 60 * 60 * 1000);
-            state.db.attendances.push({
-              id: crypto.randomUUID(),
-              studentId: aluno.id,
-              dt: dataPassada.toISOString().split('T')[0],
-              hora: `${14 + (i % 4)}:${i % 2 === 0 ? '00' : '30'}`,
-              origem: 'kiosk',
-              timestamp: dataPassada.toISOString()
-            });
-          }
-        }
-      });
-      
-      save();
-      renderKiosk();
-      if (state.admin.logged) renderAdminLista();
-      alert('✅ Dados de exemplo carregados');
-    }
-
-    function wipeAll() {
-      if (confirm('Tem a certeza que deseja apagar TODOS os dados? Esta ação é irreversível e removerá todos os alunos, presenças e informações.')) {
-        localStorage.removeItem(LS_KEY);
-        localStorage.removeItem("explicacao-logged");
-        state.db = { students: [], attendances: [] };
-        renderKiosk();
-        if (state.admin.logged) renderAdminLista();
-        alert('✅ Todos os dados foram removidos');
-        showEntryScreen();
-      }
-    }
 
     // ======= INICIALIZAÇÃO =======
     function init() {
@@ -1039,4 +934,5 @@
     }
 
     // Iniciar a aplicação quando o documento estiver carregado
+
     document.addEventListener('DOMContentLoaded', init);
