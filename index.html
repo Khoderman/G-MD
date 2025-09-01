@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explicação MD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Tela de entrada inicial -->
+  <div id="entryScreen" class="entry-screen">
+    <div class="brand" style="margin-bottom: 40px;">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="brand-text">
+        <div class="brand-title">Explicação MD</div>
+        <div class="brand-subtitle">Matemática • Física • Química</div>
+      </div>
+    </div>
+    
+    <h1 class="entry-title">Bem-vindo ao Sistema de Gestão</h1>
+    <p class="entry-subtitle">Selecione o modo de acesso conforme o seu perfil de utilização do sistema</p>
+    
+    <div class="entry-buttons">
+      <button class="entry-btn entry-btn-primary" onclick="openAdminLogin()">
+        <span class="entry-icon">🔒</span>
+        <span>Entrar como Administrador</span>
+      </button>
+      <button class="entry-btn entry-btn-secondary" onclick="openAlunoAccess()">
+        <span class="entry-icon">👨‍🎓</span>
+        <span>Acessar como Aluno/Encarregado</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tela de login administrativo -->
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <h2 class="login-title">Acesso Administrativo</h2>
+      
+      <div id="loginError" class="login-error">
+        Credenciais inválidas. Tente novamente.
+      </div>
+      
+      <div class="form-group">
+        <label for="usuarioLogin">Utilizador</label>
+        <input id="usuarioLogin" placeholder="Digite o seu utilizador">
+      </div>
+      
+      <div class="form-group">
+        <label for="senhaLogin">Palavra-passe</label>
+        <input id="senhaLogin" type="password" placeholder="Digite a sua palavra-passe">
+      </div>
+      
+      <button class="btn primary" style="width: 100%;" id="btnLoginEntrar">Entrar</button>
+      
+      <a class="login-back" onclick="showEntryScreen()">← Voltar para seleção de acesso</a>
+    </div>
+  </div>
+
+  <!-- Aplicação principal (inicialmente oculta) -->
+  <div class="app" style="display: none;">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="brand-text">
+          <div class="brand-title">Explicação MD</div>
+          <div class="brand-subtitle">Matemática • Física • Química</div>
+        </div>
+      </div>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="kiosk">
+          <span>📋</span>
+          <span>Marcar Presença</span>
+        </button>
+        <button class="tab-btn" data-tab="aluno">
+          <span>👨‍🎓</span>
+          <span>Aluno/Encarregado</span>
+        </button>
+        <button class="tab-btn" data-tab="admin">
+          <span>🔧</span>
+          <span>Administrador</span>
+        </button>
+        <button class="tab-btn" data-tab="dados">
+          <span>💾</span>
+          <span>Dados</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- KIOSK: Presença sem login -->
+    <section class="grid panel" data-panel="kiosk">
+      <div class="col-8">
+        <div class="card">
+          <h3>Marcar Presença</h3>
+          <p class="text-secondary" style="margin-bottom: 20px;">Pesquise pelo nome e clique para marcar presença</p>
+          <div class="row">
+            <div class="form-group" style="flex: 3;">
+              <input id="kioskSearch" placeholder="Digite o nome do aluno..." />
+            </div>
+            <button class="btn" id="kioskClear">Limpar</button>
+          </div>
+          <div id="kioskList" class="soft search-results" style="margin-top: 16px;"></div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card card-compact">
+          <h3>Estatísticas de Hoje</h3>
+          <div id="todayStats" class="stat-card">
+            <div class="stat-number">0</div>
+            <div class="stat-label">Presenças Marcadas</div>
+          </div>
+          <div style="margin-top: 20px;">
+            <div class="inline" style="margin-bottom: 12px;">
+              <span class="pill success">✓ Presente</span>
+              <span class="text-muted">Registo imediato</span>
+            </div>
+            <div class="inline">
+              <span class="pill warning">📅 Agendado</span>
+              <span class="text-muted">Aula marcada</span>
+            </div>
+            <div class="inline" style="margin-top: 12px;">
+              <span class="pill danger">❌ Falta</span>
+              <span class="text-muted">Registo automático</span>
+            </div>
+          </div>
+        </div>
+        <div class="card card-compact">
+          <h3>Ações Rápidas</h3>
+          <div class="row">
+            <button class="btn" onclick="seedDemo()">Carregar Demo</button>
+            <button class="btn danger" onclick="wipeAll()">Limpar Tudo</button>
+          </div>
+          <div class="soft" style="margin-top: 16px;">
+            <p class="text-muted" style="font-size: 13px;">
+              <strong>Nota:</strong> O sistema regista automaticamente faltas após as 20h para alunos sem presença.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Portal do Aluno / Encarregado -->
+    <section class="grid panel" data-panel="aluno" style="display:none">
+      <div class="col-4">
+        <div class="card">
+          <h3>Acesso do Aluno</h3>
+          <p class="text-secondary" style="margin-bottom: 20px;">Insira o código fornecido pela administração</p>
+          <div class="form-group">
+            <label for="studentCode">Código do Aluno</label>
+            <input id="studentCode" placeholder="ex.: A1B2C3" />
+          </div>
+          <button class="btn primary" style="width: 100%;" id="btnAlunoLogin">Entrar</button>
+          <div class="soft" style="margin-top: 20px;">
+            <p class="text-muted" style="font-size: 13px;">
+              <strong>Como obter o código?</strong> Contacte a administração do centro de explicações para receber o seu código de acesso pessoal.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
+        <div class="card" id="alunoView" style="display:none">
+          <div class="inline">
+            <h3 id="alunoNome">—</h3>
+            <span class="code right" id="alunoCodigo">—</span>
+          </div>
+          <div class="grid" style="margin-top: 24px;">
+            <div class="col-6">
+              <div class="soft">
+                <div class="inline">
+                  <strong>Saldo</strong> 
+                  <span class="right" id="alunoSaldo">—</span>
+                </div>
+                <small class="text-muted">Estado atual dos pagamentos</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="soft">
+                <div class="inline">
+                  <strong>Próximas Aulas</strong> 
+                  <span class="right" id="alunoProx">—</span>
+                </div>
+                <small class="text-muted">Agendamentos confirmados</small>
+              </div>
+            </div>
+            <div class="col-12">
+              <h3 style="margin-top: 24px; margin-bottom: 16px;">Histórico </h3>
+              <div class="grid">
+                <div class="col-12">
+                  <div class="soft">
+                    <strong style="margin-bottom: 12px; display: block;">Presenças</strong>
+                    <div class="table-container">
+                      <table id="alunoPresencas">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Estado</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="soft">
+                    <strong style="margin-bottom: 12px; display: block;">Notas</strong>
+                    <div class="table-container">
+                      <table id="alunoNotas">
+                        <thead>
+                          <tr>
+                            <th>Disciplina</th>
+                            <th>Teste</th>
+                            <th>Nota</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="soft">
+                    <strong style="margin-bottom: 12px; display: block;">Pagamentos</strong>
+                    <div class="table-container">
+                      <table id="alunoPagamentos">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Método</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="soft">
+                    <strong style="margin-bottom: 12px; display: block;">Comportamento</strong>
+                    <div class="table-container">
+                      <table id="alunoComport">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Nível</th>
+                            <th>Observação</th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="inline right" style="margin-top: 20px;">
+            <button class="btn" onclick="logoutAluno()">Terminar Sessão</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Administração -->
+    <section class="grid panel" data-panel="admin" style="display:none">
+      <div class="col-4">
+        <div class="card" id="adminLoginCard">
+          <h3>Acesso Administrativo</h3>
+          <p class="text-secondary" style="margin-bottom: 20px;">Área restrita para gestão do sistema</p>
+          <div class="form-group">
+            <label>Palavra-passe</label>
+            <input id="adminPass" type="password" placeholder="••••••" />
+          </div>
+          <button class="btn primary" style="width: 100%;" id="btnAdminLogin">Entrar</button>
+          <div class="soft" style="margin-top: 20px;">
+            <p class="text-muted" style="font-size: 13px;">
+              <strong>Nota:</strong> Contacte o administrador do sistema se não tiver credenciais de acesso.
+            </p>
+          </div>
+        </div>
+        <div class="card" id="adminProfile" style="display:none">
+          <div class="inline">
+            <h3>Painel Admin</h3>
+            <button class="btn" onclick="logoutAdmin()">Sair</button>
+          </div>
+          <p class="text-secondary">Gerir alunos, notas, pagamentos e comportamento.</p>
+          <div class="soft" style="margin-top: 16px;">
+            <p class="text-muted" style="font-size: 13px;">
+              <strong>Dica:</strong> Utilize a pesquisa para encontrar rapidamente alunos específicos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-8" id="adminArea" style="display:none">
+        <div class="card">
+          <div class="inline">
+            <h3>Gestão de Alunos</h3>
+            <div class="right row" style="max-width: 400px;">
+              <input id="adminSearch" placeholder="Pesquisar aluno..." />
+              <button class="btn primary" id="btnNovoAluno">+ Novo Aluno</button>
+            </div>
+          </div>
+          <div id="adminListaAlunos" class="soft search-results" style="margin-top: 16px;"></div>
+        </div>
+
+        <div class="card" id="adminEditor" style="display:none; margin-top: 24px;">
+          <div class="inline">
+            <h3 id="edTitulo">Dados do Aluno</h3>
+            <span class="code right" id="edCodigo">—</span>
+          </div>
+          <div class="grid" style="margin-top: 24px;">
+            <div class="col-6">
+              <div class="form-group">
+                <label>Nome Completo</label>
+                <input id="edNome" />
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label>Mensalidade (MZN)</label>
+                <input id="edMensalidade" type="number" min="0" />
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label>Código de Acesso</label>
+                <div class="row">
+                  <input id="edCodigoInput" />
+                  <button class="btn" onclick="randomCode('edCodigoInput')">Gerar</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12" style="margin-top: 24px;">
+              <div class="grid">
+                <div class="col-6">
+                  <div class="soft">
+                    <div class="inline" style="margin-bottom: 16px;">
+                      <strong>Notas</strong>
+                      <div class="right row" style="max-width: 300px;">
+                        <input id="notaDisc" placeholder="Disciplina" />
+                        <input id="notaPer" placeholder="Teste" />
+                        <input id="notaVal" placeholder="Nota" type="number" step="0.01" />
+                        <button class="btn success" onclick="addNota()">+</button>
+                      </div>
+                    </div>
+                    <div class="table-container">
+                      <table id="edNotas">
+                        <thead>
+                          <tr>
+                            <th>Disciplina</th>
+                            <th>Teste</th>
+                            <th>Nota</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="soft">
+                    <div class="inline" style="margin-bottom: 16px;">
+                      <strong>Pagamentos</strong>
+                      <div class="right row" style="max-width: 300px;">
+                        <input id="pagVal" placeholder="Valor" type="number" step="0.01" />
+                        <input id="pagMetodo" placeholder="Método" />
+                        <input id="pagRef" placeholder="Referência" />
+                        <button class="btn success" onclick="addPagamento()">+</button>
+                      </div>
+                    </div>
+                    <div class="table-container">
+                      <table id="edPagamentos">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Método</th>
+                            <th>Ref</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="soft">
+                    <div class="inline" style="margin-bottom: 16px;">
+                      <strong>Comportamento</strong>
+                      <div class="right row" style="max-width: 300px;">
+                        <select id="compNivel">
+                          <option value="Excelente">Excelente</option>
+                          <option value="Bom">Bom</option>
+                          <option value="Regular">Regular</option>
+                          <option value="Fraco">Fraco</option>
+                        </select>
+                        <input id="compObs" placeholder="Observação" />
+                        <button class="btn warning" onclick="addComport()">+</button>
+                      </div>
+                    </div>
+                    <div class="table-container">
+                      <table id="edComport">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Nível</th>
+                            <th>Observação</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="soft">
+                    <div class="inline" style="margin-bottom: 16px;">
+                      <strong>Agendar Aulas</strong>
+                      <div class="right row" style="max-width: 300px;">
+                        <input id="agData" type="date" />
+                        <input id="agHora" type="time" />
+                        <button class="btn" onclick="addAgendamento()">+</button>
+                      </div>
+                    </div>
+                    <div class="table-container">
+                      <table id="edAgenda">
+                        <thead>
+                          <tr>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                    <small class="text-muted" style="margin-top: 8px; display: block;">
+                      Nota: Presenças já marcadas não podem ser alteradas.
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12" style="margin-top: 24px;">
+              <div class="inline right">
+                <button class="btn danger" onclick="apagarAluno()">Apagar Aluno</button>
+                <button class="btn success" onclick="guardarAluno()">Guardar Alterações</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dados (Exportar/Importar) -->
+    <section class="grid panel" data-panel="dados" style="display:none">
+      <div class="col-12">
+        <div class="card">
+          <h3>Gestão de Dados</h3>
+          <p class="text-secondary" style="margin-bottom: 24px;">Exporte ou importe dados do sistema</p>
+          <div class="row">
+            <button class="btn primary" onclick="exportJSON()">
+              <span>💾</span>
+              <span>Exportar Dados (JSON)</span>
+            </button>
+            <button class="btn primary" onclick="exportPDF()">
+              <span>📄</span>
+              <span>Exportar Relatório (PDF)</span>
+            </button>
+            <button class="btn" onclick="document.getElementById('importFile').click()">
+              <span>📤</span>
+              <span>Importar Dados</span>
+            </button>
+            <input id="importFile" type="file" accept="application/json" style="display:none" />
+          </div>
+          <div class="soft" style="margin-top: 24px;">
+            <p class="text-muted">
+              <strong>Nota:</strong> Faça backups regulares dos dados para prevenir perda de informação. 
+              A importação substituirá todos os dados atuais.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© 2025 Explicação MD - Sistema de Gestão</p>
+    </footer>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
