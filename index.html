@@ -32,7 +32,7 @@
       </button>
       <button class="entry-btn entry-btn-secondary" onclick="openAlunoAccess()">
         <span class="entry-icon">👨‍🎓</span>
-        <span>Acessar como Aluno/Encarregado</span>
+        <span>Entrar como Aluno/Encarregado</span>
       </button>
     </div>
   </div>
@@ -74,19 +74,19 @@
       </div>
       <nav class="tabs">
         <button class="tab-btn active" data-tab="kiosk">
-          <span>📋</span>
+         
           <span>Marcar Presença</span>
         </button>
         <button class="tab-btn" data-tab="aluno">
-          <span>👨‍🎓</span>
+     
           <span>Aluno/Encarregado</span>
         </button>
         <button class="tab-btn" data-tab="admin">
-          <span>🔧</span>
+         
           <span>Administrador</span>
         </button>
         <button class="tab-btn" data-tab="dados">
-          <span>💾</span>
+         
           <span>Dados</span>
         </button>
       </nav>
@@ -97,7 +97,7 @@
       <div class="col-8">
         <div class="card">
           <h3>Marcar Presença</h3>
-          <p class="text-secondary" style="margin-bottom: 20px;">Pesquise pelo nome e clique para marcar presença</p>
+          <p class="text-secondary" style="margin-bottom: 20px;">Pesquise o nome e clique para marcar presença</p>
           <div class="row">
             <div class="form-group" style="flex: 3;">
               <input id="kioskSearch" placeholder="Digite o nome do aluno..." />
@@ -109,7 +109,7 @@
       </div>
       <div class="col-4">
         <div class="card card-compact">
-          <h3>Estatísticas de Hoje</h3>
+          <h3>Alunos presentes</h3>
           <div id="todayStats" class="stat-card">
             <div class="stat-number">0</div>
             <div class="stat-label">Presenças Marcadas</div>
@@ -132,12 +132,12 @@
         <div class="card card-compact">
           <h3>Ações Rápidas</h3>
           <div class="row">
-            <button class="btn" onclick="seedDemo()">Carregar Demo</button>
-            <button class="btn danger" onclick="wipeAll()">Limpar Tudo</button>
+            <button class="btn" onclick="seedDemo()">Carregar Alunos </button>
+            <button class="btn danger" onclick="wipeAll()">Limpar </button>
           </div>
           <div class="soft" style="margin-top: 16px;">
             <p class="text-muted" style="font-size: 13px;">
-              <strong>Nota:</strong> O sistema regista automaticamente faltas após as 20h para alunos sem presença.
+              <strong>Nota:</strong> O sistema regista automaticamente as faltas.
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@
       <div class="col-4">
         <div class="card">
           <h3>Acesso do Aluno</h3>
-          <p class="text-secondary" style="margin-bottom: 20px;">Insira o código fornecido pela administração</p>
+          <p class="text-secondary" style="margin-bottom: 20px;">Insira o código </p>
           <div class="form-group">
             <label for="studentCode">Código do Aluno</label>
             <input id="studentCode" placeholder="ex.: A1B2C3" />
@@ -157,7 +157,7 @@
           <button class="btn primary" style="width: 100%;" id="btnAlunoLogin">Entrar</button>
           <div class="soft" style="margin-top: 20px;">
             <p class="text-muted" style="font-size: 13px;">
-              <strong>Como obter o código?</strong> Contacte a administração do centro de explicações para receber o seu código de acesso pessoal.
+              <strong>Como obter o código?</strong> Contacte o administrador para receber o seu código de acesso .
             </p>
           </div>
         </div>
@@ -279,21 +279,16 @@
             <input id="adminPass" type="password" placeholder="••••••" />
           </div>
           <button class="btn primary" style="width: 100%;" id="btnAdminLogin">Entrar</button>
-          <div class="soft" style="margin-top: 20px;">
-            <p class="text-muted" style="font-size: 13px;">
-              <strong>Nota:</strong> Contacte o administrador do sistema se não tiver credenciais de acesso.
-            </p>
-          </div>
         </div>
         <div class="card" id="adminProfile" style="display:none">
           <div class="inline">
             <h3>Painel Admin</h3>
             <button class="btn" onclick="logoutAdmin()">Sair</button>
           </div>
-          <p class="text-secondary">Gerir alunos, notas, pagamentos e comportamento.</p>
+    
           <div class="soft" style="margin-top: 16px;">
             <p class="text-muted" style="font-size: 13px;">
-              <strong>Dica:</strong> Utilize a pesquisa para encontrar rapidamente alunos específicos.
+              <strong>NB:</strong> Utilize a pesquisa para encontrar rapidamente alunos específicos.
             </p>
           </div>
         </div>
@@ -305,7 +300,7 @@
             <h3>Gestão de Alunos</h3>
             <div class="right row" style="max-width: 400px;">
               <input id="adminSearch" placeholder="Pesquisar aluno..." />
-              <button class="btn primary" id="btnNovoAluno">+ Novo Aluno</button>
+              <button class="btn primary" id="btnNovoAluno">+ Registar Aluno</button>
             </div>
           </div>
           <div id="adminListaAlunos" class="soft search-results" style="margin-top: 16px;"></div>
@@ -447,7 +442,7 @@
                       </table>
                     </div>
                     <small class="text-muted" style="margin-top: 8px; display: block;">
-                      Nota: Presenças já marcadas não podem ser alteradas.
+                      NB: Presenças já marcadas não podem ser alteradas.
                     </small>
                   </div>
                 </div>
@@ -497,9 +492,10 @@
     </section>
 
     <footer class="footer">
-      <p>© 2025 Explicação MD - Sistema de Gestão</p>
+      <p>© 2025 Explicação MD - Sistema de Gestão da Explicação</p>
     </footer>
   </div>
   <script src="app.js"></script>
 </body>
+
 </html>
